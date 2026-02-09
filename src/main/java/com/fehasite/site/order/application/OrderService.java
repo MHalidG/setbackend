@@ -1,40 +1,50 @@
 package com.fehasite.site.order.application;
 
 import com.fehasite.site.order.domain.Order;
-import com.fehasite.site.customization.domain.Customization;
-import com.fehasite.site.customization.domain.CustomizationType;
-import com.fehasite.site.customization.domain.ProductionMethod;
+import com.fehasite.site.product.domain.Set;
+import com.fehasite.site.product.domain.SetItem;
+import org.springframework.stereotype.Service;
 
+@Service
 public class OrderService {
 
-    // Şimdilik repository yok
-    // Akışı görmek için saf hali
+    private final OrderRepository orderRepository;
+    private final SetRepository setRepository;
 
-    public void createOrder(CreateOrderCommand command) {
-
-        // 1️⃣ Order oluştur
-        Order order = new Order(command.totalPriceCents());
-
-        // (ileride: orderRepository.save(order))
-        Long orderId = 1L; // simülasyon
-
-        // 2️⃣ Customization oluştur
-        Customization customization;
-
-        if (command.customizationType() == CustomizationType.TEXT) {
-            customization = Customization.textCustomization(
-                    orderId,
-                    ProductionMethod.LASER,
-                    command.textValue()
-            );
-        } else {
-            customization = Customization.imageCustomization(
-                    orderId,
-                    ProductionMethod.SUBLIMATION,
-                    command.imageKey()
-            );
-        }
-
-        // (ileride: customizationRepository.save(customization))
+    public OrderService(
+            OrderRepository orderRepository,
+            SetRepository setRepository
+    ) {
+        this.orderRepository = orderRepository;
+        this.setRepository = setRepository;
     }
 }
+/*
+    public Order createOrderWithSets(Long[] setIds) {
+
+        if (setIds == null || setIds.length == 0) {
+            throw new IllegalArgumentException("Order must contain at least one set");
+        }
+
+        Order order = Order.create();
+
+        for (Long setId : setIds) {
+            Set set = setRepository.findById(setId)
+                    .orElseThrow(() -> new IllegalArgumentException("Set not found"));
+
+            for (SetItem setItem : set.getItems()) {
+                OrderItem orderItem = new OrderItem(
+                        setItem.getProduct().getName(),
+                        set.getBasePriceCents(),
+                        setItem.getQuantity()
+                );
+                order.addItem(orderItem);
+            }
+        }
+
+        return orderRepository.save(order);
+    } */
+
+
+
+

@@ -10,85 +10,59 @@ public class Customization {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Long orderId; // gevşek bağ
+    private CustomizationType type;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private ProductionMethod productionMethod;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private CustomizationType type;
-
-    // TEXT için
-    @Column(length = 500)
+    @Column
     private String textValue;
 
-    // IMAGE için (dosya yolu / object storage key)
+    @Column
     private String imageKey;
 
     protected Customization() {
         // JPA
     }
 
-    private Customization(Long orderId,
-                          ProductionMethod productionMethod,
-                          CustomizationType type,
-                          String textValue,
-                          String imageKey) {
-        this.orderId = orderId;
-        this.productionMethod = productionMethod;
+    private Customization(
+            CustomizationType type,
+            ProductionMethod productionMethod,
+            String textValue,
+            String imageKey
+    ) {
         this.type = type;
+        this.productionMethod = productionMethod;
         this.textValue = textValue;
         this.imageKey = imageKey;
     }
 
-    // -------- Factory'ler (davranış odaklı) --------
-
-    public static Customization textCustomization(Long orderId,
-                                                  ProductionMethod method,
-                                                  String text) {
-        if (method != ProductionMethod.LASER) {
-            throw new IllegalArgumentException("Text customization requires LASER method");
-        }
+    public static Customization text(String text, ProductionMethod method) {
         if (text == null || text.isBlank()) {
             throw new IllegalArgumentException("Text cannot be blank");
         }
-        return new Customization(orderId, method, CustomizationType.TEXT, text, null);
+
+        return new Customization(
+                CustomizationType.TEXT,
+                method,
+                text,
+                null
+        );
     }
 
-    public static Customization imageCustomization(Long orderId,
-                                                   ProductionMethod method,
-                                                   String imageKey) {
-        if (method != ProductionMethod.SUBLIMATION) {
-            throw new IllegalArgumentException("Image customization requires SUBLIMATION method");
-        }
+    public static Customization image(String imageKey, ProductionMethod method) {
         if (imageKey == null || imageKey.isBlank()) {
             throw new IllegalArgumentException("Image key cannot be blank");
         }
-        return new Customization(orderId, method, CustomizationType.IMAGE, null, imageKey);
-    }
 
-    // -------- Getter'lar --------
-
-    public Long getOrderId() {
-        return orderId;
-    }
-
-    public ProductionMethod getProductionMethod() {
-        return productionMethod;
-    }
-
-    public CustomizationType getType() {
-        return type;
-    }
-
-    public String getTextValue() {
-        return textValue;
-    }
-
-    public String getImageKey() {
-        return imageKey;
+        return new Customization(
+                CustomizationType.IMAGE,
+                method,
+                null,
+                imageKey
+        );
     }
 }

@@ -7,5 +7,5 @@ public enum OrderStatus {
     IN_PRODUCTION,  // üretime alındı
     SHIPPED,        // kargoya verildi
     COMPLETED,      // teslim edildi
-    CANCELED        // üretim başlamadan iptal
+    CANCELLED        // üretim başlamadan iptal
 }
